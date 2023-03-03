@@ -15,6 +15,7 @@ namespace RBTree
             test1.Insert(6);
             test1.Print();
             Console.WriteLine(test1.Deep);
+            Console.WriteLine(test1.GetNode(4).GrandFather.Key); 
         }
     }
 }

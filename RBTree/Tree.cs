@@ -3,11 +3,7 @@ using System.Collections.Generic;
 
 namespace RBTree
 {
-    public enum Colors
-    {
-        Red,
-        Black
-    }
+
 
     public class Tree
     {
@@ -52,6 +48,18 @@ namespace RBTree
         {
 
         }
+        
+        public Node GetNode(int value)
+        {
+            var node = root;
+            while (node!=null)
+            {
+                if (node.Key == value)
+                    return node;
+                node = node.Key < value ? node.Right : node.Left;
+            }
+            return null;
+        }
 
         public void Print()
         {
@@ -60,7 +68,7 @@ namespace RBTree
             var queue = new Queue<Node>();
             var level = root.Level;
             queue.Enqueue(root);
-            Console.WriteLine(new string(' ', deep+deep-1)); // fix intervals
+            //Console.WriteLine(new string(' ', deep+deep-1)); // fix intervals
             while (queue.Count != 0)
             {
                 var node = queue.Dequeue();
@@ -69,7 +77,12 @@ namespace RBTree
                     Console.WriteLine();
                     level++;
                 }
+                if (node.Color==Colors.Red)
+                {
+                    Console.ForegroundColor= ConsoleColor.Red;
+                }
                 Console.Write(node.Key);
+                Console.ResetColor();
                 Console.Write("  ");
                 if (node.Left != null)
                     queue.Enqueue(node.Left);
@@ -80,22 +93,4 @@ namespace RBTree
         }
     }
 
-    public class Node
-    {
-        public int Key { get; set; }
-        public Colors Color { get; set; }
-        public Node Parent { get; set; }
-        public Node Left { get; set; }
-        public Node Right { get; set; }
-        public int Level { get; set; }  // Field create for print funk
-
-        public Node(int key)
-        {
-            Key = key;
-            Color = Colors.Red;
-            Parent = null;
-            Left = null;
-            Right = null;
-        }
-    }
 }
