@@ -46,6 +46,15 @@ namespace RBTree
         // TODO
         private void Balanced(Node node)
         {
+            if (node == root)
+            {
+                node.Color = Colors.Black;
+                return;
+            }
+            while (node.Parent != null && node.Parent.Color==Colors.Red)
+            {
+
+            }
 
         }
         
