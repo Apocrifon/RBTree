@@ -61,6 +61,25 @@ namespace RBTree
             return null;
         }
 
+        public void LeftRotate(Node node)
+        {
+            var father = node.Parent;
+            var grandFather = node.GrandFather;
+            if (grandFather==root)
+            {
+                var temp = grandFather;
+                grandFather.Level++;
+                root = father;
+                root.Level--;
+                node.Level--;
+                root.Parent = null;
+                root.Left=temp;
+                root.Left.Right = null;
+                root.Right=node;
+                node.Parent = root;                
+            }
+        }
+
         public void Print()
         {
             if (root == null)
