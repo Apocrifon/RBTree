@@ -33,7 +33,7 @@
             {
                 if (GrandFather != null)
                 {
-                    if (GrandFather.Left == this)
+                    if (GrandFather.Left == this.Parent)
                         return GrandFather.Right;
                     else
                         return GrandFather.Left;
@@ -41,6 +41,11 @@
                 else
                     return null;
             }
+        }
+
+        public bool LeftConnected()
+        {
+            return Parent.Left == this;
         }
 
         public Node(int key)

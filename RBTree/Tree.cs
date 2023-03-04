@@ -19,6 +19,7 @@ namespace RBTree
             {
                 root = new Node(value);
                 root.Level = 1;
+                root.Color = Colors.Black;
                 return;
             }
             var curNode = root;
@@ -51,11 +52,50 @@ namespace RBTree
                 node.Color = Colors.Black;
                 return;
             }
-            while (node.Parent != null && node.Parent.Color==Colors.Red)
+            while (node.Parent != null && node.Parent.Color == Colors.Red)
             {
-
+                if (node.Parent.LeftConnected())
+                {
+                    if (node.Uncle != null && node.Uncle.Color == Colors.Red)
+                        ColorSwap(node);
+                    else
+                    {
+                        if (!node.LeftConnected())
+                        {
+                            node = node.Parent;
+                            LeftRotate(node);
+                        }
+                        node.Parent.Color = Colors.Black;
+                        node.GrandFather.Color = Colors.Red;
+                        RightRotate(node.GrandFather);
+                    }
+                }
+                else
+                {
+                    if (node.Uncle != null && node.Uncle.Color == Colors.Red)
+                        ColorSwap(node);
+                    else
+                    {
+                        if (node.LeftConnected())
+                        {
+                            node = node.Parent;
+                            RightRotate(node);
+                        }
+                        node.Parent.Color = Colors.Black;
+                        node.GrandFather.Color = Colors.Red;
+                        LeftRotate(node.GrandFather);
+                    }
+                }
+                root.Color= Colors.Black;
             }
+        }
 
+        private void ColorSwap(Node node)
+        {
+            node.Parent.Color = Colors.Black;
+            node.Uncle.Color = Colors.Black;
+            node.GrandFather.Color = Colors.Red;
+            node = node.GrandFather;
         }
         
         public Node GetNode(int value)
@@ -70,23 +110,44 @@ namespace RBTree
             return null;
         }
 
+
+
         public void LeftRotate(Node node)
         {
-            var father = node.Parent;
-            var grandFather = node.GrandFather;
-            if (grandFather==root)
+            if (node != root)
             {
-                var temp = grandFather;
-                grandFather.Level++;
-                root = father;
-                root.Level--;
-                node.Level--;
-                root.Parent = null;
-                root.Left=temp;
-                root.Left.Right = null;
-                root.Right=node;
-                node.Parent = root;                
+                if (node.LeftConnected())
+                    node.Parent.Left = node.Right;
+                else
+                    node.Parent.Right = node.Right;
             }
+            else
+                root = node.Right;
+            node.Right.Left = node;
+            node.Right.Level--;
+            node.Right.Right.Level--;
+            node.Level++;
+            node.Left = null;
+            node.Right = null;
+        }
+
+        public void RightRotate(Node node)
+        {
+            if (node != root)
+            {
+                if (node.LeftConnected())
+                    node.Parent.Left = node.Left;
+                else
+                    node.Parent.Right = node.Left;
+            }
+            else
+                root = node.Left;
+            node.Left.Right = node;
+            node.Left.Level--;
+            node.Left.Left.Level--;
+            node.Level++;
+            node.Left = null;
+            node.Right = null;
         }
 
         public void Print()
