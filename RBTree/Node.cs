@@ -13,11 +13,8 @@
         public Node Parent { get; set; }
         public Node Left { get; set; }
         public Node Right { get; set; }
-        public int Level { get; set; }  // Field create for print funk
-        // поле дед и дядя мб нужно сделать методами, потому что какой-то доступ к ним сложный,
-        // с точки зрения проектирования мне не нравится
+        public int Level { get; set; }
         public Node GrandFather   
-
         {
             get
             {
@@ -27,6 +24,7 @@
                     return null;
             }
         }
+
         public Node Uncle
         {
             get 
