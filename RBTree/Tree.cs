@@ -37,6 +37,7 @@ namespace RBTree
             deep=newNode.Level;
             Balanced(newNode);
         }
+
         // TODO
         public void Delete(int value)
         {
