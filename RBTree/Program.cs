@@ -16,6 +16,7 @@ namespace RBTree
             test1.Insert(45);
             test1.Insert(33);
             test1.Insert(18);
+            test1.Delete(23);
             test1.Print();
         }
     }

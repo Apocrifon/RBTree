@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace RBTree
 {
-
-
     public class Tree
     {
         private Node root = null;
@@ -35,16 +33,66 @@ namespace RBTree
 
             newNode.Parent = prevNode;
             deep=newNode.Level;
-            Balanced(newNode);
+            InsertBalanced(newNode);
         }
 
         // TODO
         public void Delete(int value)
         {
-
+            var p = root;
+            while (p.Key != value)
+                p = p.Key < value ? p.Right : p.Left;
+            if (p.Left == null && p.Right == null)
+            {
+                if (p == root)
+                    root = null;
+                else
+                {
+                    if (p.LeftConnected())
+                        p.Parent.Left = null;
+                    else
+                        p.Parent.Right = null;
+                }
+                return;
+            }
+            Node y = null;
+            Node q = null;
+            if (p.Left != null ^ p.Right != null)
+            {
+                var son = p.Left != null ? p.Left : p.Right;
+                if (p.LeftConnected())
+                    p.Parent.Left = son;
+                else
+                    p.Parent.Right = son;
+            }
+            else
+            {
+                var closestValue = p.Right;
+                while(closestValue.Left!=null)
+                    closestValue = closestValue.Left;
+                y = closestValue;
+                if (y.Right != null)
+                    y.Right.Parent = y.Parent;
+                if (y == root)
+                    root = y.Right;
+                else
+                {
+                    if (y.LeftConnected())
+                        y.Parent.Left = y.Right;
+                    else
+                        y.Parent.Right = y.Right;
+                }
+            }
+            if (y != p)
+            {
+                p.Color = y.Color;
+                p.Key = y.Key;
+            }
+            if (y.Color == Colors.Black)
+                DeleteBalanced(y);
         }
 
-        private void Balanced(Node node)
+        private void InsertBalanced(Node node)
         {
             if (node == root)
             {
@@ -95,6 +143,11 @@ namespace RBTree
                 }
                 root.Color= Colors.Black;
             }
+        }
+
+        private void DeleteBalanced(Node node)
+        {
+
         }
 
         public void LeftRotate(Node node)
