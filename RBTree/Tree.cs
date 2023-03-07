@@ -72,7 +72,13 @@ namespace RBTree
                     closestValue = closestValue.Left;
                 y = closestValue;
                 if (y.Right != null)
+                {
                     y.Right.Parent = y.Parent;
+                    if (y.LeftConnected())
+                        y.Parent.Left = y.Right;
+                    else
+                        y.Parent.Right = y.Right;
+                }
                 if (y == root)
                     root = y.Right;
                 else
@@ -240,7 +246,6 @@ namespace RBTree
             var queue = new Queue<Node>();
             var level = root.Level;
             queue.Enqueue(root);
-            //Console.WriteLine(new string(' ', deep+deep-1)); // fix intervals
             while (queue.Count != 0)
             {
                 var node = queue.Dequeue();
@@ -250,9 +255,7 @@ namespace RBTree
                     level++;
                 }
                 if (node.Color==Colors.Red)
-                {
                     Console.ForegroundColor= ConsoleColor.Red;
-                }
                 Console.Write(node.Key);
                 Console.ResetColor();
                 Console.Write("  ");
@@ -264,5 +267,5 @@ namespace RBTree
             Console.WriteLine();
         }
     }
-
+        
 }
