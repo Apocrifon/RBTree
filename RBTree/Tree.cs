@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace RBTree
 {
@@ -32,70 +34,7 @@ namespace RBTree
                 prevNode.Right = newNode;
 
             newNode.Parent = prevNode;
-            deep=newNode.Level;
             InsertBalanced(newNode);
-        }
-
-        // TODO
-        public void Delete(int value)
-        {
-            var p = root;
-            while (p.Key != value)
-                p = p.Key < value ? p.Right : p.Left;
-            if (p.Left == null && p.Right == null)
-            {
-                if (p == root)
-                    root = null;
-                else
-                {
-                    if (p.LeftConnected())
-                        p.Parent.Left = null;
-                    else
-                        p.Parent.Right = null;
-                }
-                return;
-            }
-            Node y = null;
-            Node q = null;
-            if (p.Left != null ^ p.Right != null)
-            {
-                var son = p.Left != null ? p.Left : p.Right;
-                if (p.LeftConnected())
-                    p.Parent.Left = son;
-                else
-                    p.Parent.Right = son;
-            }
-            else
-            {
-                var closestValue = p.Right;
-                while(closestValue.Left!=null)
-                    closestValue = closestValue.Left;
-                y = closestValue;
-                if (y.Right != null)
-                {
-                    y.Right.Parent = y.Parent;
-                    if (y.LeftConnected())
-                        y.Parent.Left = y.Right;
-                    else
-                        y.Parent.Right = y.Right;
-                }
-                if (y == root)
-                    root = y.Right;
-                else
-                {
-                    if (y.LeftConnected())
-                        y.Parent.Left = y.Right;
-                    else
-                        y.Parent.Right = y.Right;
-                }
-            }
-            if (y != p)
-            {
-                p.Color = y.Color;
-                p.Key = y.Key;
-            }
-            if (y.Color == Colors.Black)
-                DeleteBalanced(y);
         }
 
         private void InsertBalanced(Node node)
@@ -151,15 +90,47 @@ namespace RBTree
             }
         }
 
+        public void Delete(int value)
+        {
+
+        }
+
         private void DeleteBalanced(Node node)
         {
 
         }
 
+        private Node FindNode(int key)
+        {
+            var p = root;
+            while (p.Key != key)
+                p = p.Key > key ? p.Left : p.Right;
+            return p;
+        }
+
+        public Node NextNode(Node node)
+        {
+            if (node.Left != null)
+            {
+                node = node.Left;
+                while (node.Right!=null)
+                    node = node.Right;
+            }
+            else
+            {
+                node = node.Right;
+                while (node.Left != null)
+                    node = node.Left;
+            }
+            return node;
+        }
+
+
+
         public void LeftRotate(Node node)
         {
             var rightSon = node.Right;
-            if (node== root)
+            if (node == root)
             {
                 root = rightSon;
                 rightSon.Parent = null;
@@ -173,9 +144,10 @@ namespace RBTree
                     node.Parent.Right = rightSon;
             }
             node.Right = rightSon.Left;
+            if (rightSon.Left != null)
+                rightSon.Left.Parent = node;
             rightSon.Left = node;
             node.Parent = rightSon;
-
         }
 
         public void RightRotate(Node node)
@@ -266,6 +238,8 @@ namespace RBTree
             }
             Console.WriteLine();
         }
+
+
     }
         
 }

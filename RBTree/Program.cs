@@ -18,6 +18,8 @@ namespace RBTree
             test1.Insert(18);
             test1.Insert(34);
             test1.Insert(17);
+            test1.Delete(23);
+            test1.Delete(17);
             test1.Delete(30);
             test1.Print();
         }
