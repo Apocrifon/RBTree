@@ -204,7 +204,8 @@ namespace RBTree
 
         private void Transplant(Node prevNode, Node newNode)
         {
-            newNode.Color = prevNode.Color;
+            if (newNode!=null)
+                newNode.Color = prevNode.Color;
             if (prevNode == null)
                 root = newNode;
             else
