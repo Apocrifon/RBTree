@@ -3,7 +3,7 @@
 ## Operations
 - Insert
 - Delete
-- InsertBalanced
+- InsertBalanced  
 -DeleteBalanced
 
 ### 
