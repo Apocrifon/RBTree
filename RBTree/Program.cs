@@ -7,22 +7,17 @@ namespace RBTree
         static void Main()
         {
             var test1 = new Tree();
-            test1.Insert(20);
-            test1.Insert(25);
-            test1.Insert(23);
-            test1.Insert(30);
-            test1.Insert(35);
-            test1.Insert(40);
-            test1.Insert(45);
-            test1.Insert(33);
-            test1.Insert(18);
-            test1.Insert(34);
-            test1.Insert(17);
-            test1.Insert(10);
-            test1.Insert(5);
-            test1.Delete(23);
-            //test1.Delete(17);
-            //test1.Delete(30);
+            for (int i = 5; i <= 60; i+=5)
+            {
+                test1.Insert(i);
+            }
+            test1.Print();
+            Console.WriteLine();
+            test1.Delete(30);
+            test1.Delete(20);
+            test1.Insert(13);
+            test1.Insert(27);
+            test1.Insert(70);
             test1.Print();
         }
     }

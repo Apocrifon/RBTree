@@ -95,7 +95,7 @@ namespace RBTree
         {
             var p = FindNode(value);
             var deleteNode = p;
-            Node y = null;
+            Colors originalColor=p.Color;
             if (p.Left == null)
             {
                 deleteNode = p.Right;
@@ -111,6 +111,7 @@ namespace RBTree
                 else
                 {
                     deleteNode = MinNode(p.Right);
+                    originalColor = deleteNode.Color;
                     if (deleteNode.Right!=null)
                         deleteNode.Right.Parent = deleteNode.Parent;
                     if (deleteNode == root)
@@ -123,14 +124,11 @@ namespace RBTree
                             deleteNode.Parent.Right = deleteNode.Right;
                     }
                     if (deleteNode != p)
-                    {
-                        p.Color= deleteNode.Color;
                         p.Key = deleteNode.Key;
-                    }
-                    if (deleteNode.Color == Colors.Black)
-                        DeleteBalanced(deleteNode);
                 }
             }
+            if (originalColor == Colors.Black)
+                DeleteBalanced(deleteNode);
 
         }
 
@@ -138,8 +136,8 @@ namespace RBTree
         {
             while (node !=root &&  node.Color==Colors.Black)
             {
-                var brother = node;
-                if (node.Key <= node.Parent.Key) // не будет работать 
+                Node brother = null;
+                if (node.Key < node.Parent.Key) // не будет работать 
                 {
                     brother = node.Parent.Right;
                     if (brother.Color == Colors.Red)
@@ -158,7 +156,7 @@ namespace RBTree
                     {
                         if (brother.Right.Color== Colors.Black)
                         {
-                            brother.Left.Color = Colors.Black;
+                            brother.Left.Color = Colors.Black; //
                             brother.Color = Colors.Red;
                             RightRotate(brother);
                             brother = node.Parent.Right;
@@ -200,14 +198,14 @@ namespace RBTree
                         RightRotate(node.Parent);
                         node = root;
                     }
-                }
-                node.Color = Colors.Black;
-                root.Color = Colors.Black;
+                }             
             }
+            node.Color = Colors.Black;
         }
 
         private void Transplant(Node prevNode, Node newNode)
         {
+            newNode.Color = prevNode.Color;
             if (prevNode == null)
                 root = newNode;
             else
