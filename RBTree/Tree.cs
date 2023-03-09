@@ -129,7 +129,6 @@ namespace RBTree
             }
             if (originalColor == Colors.Black)
                 DeleteBalanced(deleteNode);
-
         }
 
         private void DeleteBalanced(Node node)
@@ -137,7 +136,7 @@ namespace RBTree
             while (node !=root &&  node.Color==Colors.Black)
             {
                 Node brother = null;
-                if (node.Key < node.Parent.Key) // не будет работать 
+                if (node.Key < node.Parent.Key)
                 {
                     brother = node.Parent.Right;
                     if (brother.Color == Colors.Red)
@@ -147,7 +146,7 @@ namespace RBTree
                         LeftRotate(node.Parent);
                         brother = node.Parent.Right;
                     }
-                    if ((brother.Left==null || brother.Left.Color==Colors.Black) && (brother.Right==null || brother.Right.Color==Colors.Black))
+                    if (HaveBlackChildren(brother))
                     {
                         brother.Color = Colors.Red;
                         node = node.Parent;
@@ -156,7 +155,7 @@ namespace RBTree
                     {
                         if (brother.Right.Color== Colors.Black)
                         {
-                            brother.Left.Color = Colors.Black; //
+                            brother.Left.Color = Colors.Black; 
                             brother.Color = Colors.Red;
                             RightRotate(brother);
                             brother = node.Parent.Right;
@@ -178,7 +177,7 @@ namespace RBTree
                         RightRotate(node.Parent);
                         brother = node.Parent.Left;
                     }
-                    if ((brother.Left == null || brother.Left.Color == Colors.Black) && (brother.Right == null || brother.Right.Color == Colors.Black))
+                    if (HaveBlackChildren(brother))
                     {
                         brother.Color = Colors.Red;
                         node = node.Parent;
@@ -304,35 +303,10 @@ namespace RBTree
             node.GrandFather.Color = Colors.Red;
         }
 
-        private Node GetNode(int value)
+        private bool HaveBlackChildren(Node node)
         {
-            var node = root;
-            while (node != null)
-            {
-                if (node.Key == value)
-                    return node;
-                node = node.Key < value ? node.Right : node.Left;
-            }
-            return null;
-        }
-
-        private void FixNodesLeves()
-        {
-            if (root == null)
-                return;
-            root.Level = 1;
-            var queue = new Queue<Node>();
-            queue.Enqueue(root);
-            while (queue.Count !=0)
-            {
-                var node = queue.Dequeue();
-                if (node!=root)
-                    node.Level = node.Parent.Level + 1;
-                if (node.Left != null)
-                    queue.Enqueue(node.Left);
-                if (node.Right != null)
-                    queue.Enqueue(node.Right);
-            }
+            return (node.Left == null || node.Left.Color == Colors.Black) && 
+                (node.Right == null || node.Right.Color == Colors.Black);
         }
 
         public void Print()
@@ -364,7 +338,24 @@ namespace RBTree
             Console.WriteLine();
         }
 
-
+        private void FixNodesLeves()
+        {
+            if (root == null)
+                return;
+            root.Level = 1;
+            var queue = new Queue<Node>();
+            queue.Enqueue(root);
+            while (queue.Count != 0)
+            {
+                var node = queue.Dequeue();
+                if (node != root)
+                    node.Level = node.Parent.Level + 1;
+                if (node.Left != null)
+                    queue.Enqueue(node.Left);
+                if (node.Right != null)
+                    queue.Enqueue(node.Right);
+            }
+        }
     }
         
 }
