@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RBTree
 {
@@ -92,12 +93,140 @@ namespace RBTree
 
         public void Delete(int value)
         {
+            var p = FindNode(value);
+            var deleteNode = p;
+            Node y = null;
+            if (p.Left == null)
+            {
+                deleteNode = p.Right;
+                Transplant(p, deleteNode);
+            }
+            else
+            {
+                if (p.Right == null)
+                {
+                    deleteNode = p.Left;
+                    Transplant(p, deleteNode);
+                }
+                else
+                {
+                    deleteNode = MinNode(p.Right);
+                    if (deleteNode.Right!=null)
+                        deleteNode.Right.Parent = deleteNode.Parent;
+                    if (deleteNode == root)
+                        root = deleteNode.Right;
+                    else
+                    {
+                        if (deleteNode.LeftConnected())
+                            deleteNode.Parent.Left = deleteNode.Right;
+                        else
+                            deleteNode.Parent.Right = deleteNode.Right;
+                    }
+                    if (deleteNode != p)
+                    {
+                        p.Color= deleteNode.Color;
+                        p.Key = deleteNode.Key;
+                    }
+                    if (deleteNode.Color == Colors.Black)
+                        DeleteBalanced(deleteNode);
+                }
+            }
 
         }
 
         private void DeleteBalanced(Node node)
         {
+            while (node !=root &&  node.Color==Colors.Black)
+            {
+                var brother = node;
+                if (node.Key <= node.Parent.Key) // не будет работать 
+                {
+                    brother = node.Parent.Right;
+                    if (brother.Color == Colors.Red)
+                    {
+                        brother.Color = Colors.Black;
+                        node.Parent.Color = Colors.Red;
+                        LeftRotate(node.Parent);
+                        brother = node.Parent.Right;
+                    }
+                    if ((brother.Left==null || brother.Left.Color==Colors.Black) && (brother.Right==null || brother.Right.Color==Colors.Black))
+                    {
+                        brother.Color = Colors.Red;
+                        node = node.Parent;
+                    }
+                    else
+                    {
+                        if (brother.Right.Color== Colors.Black)
+                        {
+                            brother.Left.Color = Colors.Black;
+                            brother.Color = Colors.Red;
+                            RightRotate(brother);
+                            brother = node.Parent.Right;
+                        }
+                        brother.Color=node.Parent.Color;
+                        node.Parent.Color = Colors.Black;
+                        brother.Right.Color = Colors.Black;
+                        LeftRotate(node.Parent);
+                        node = root;
+                    }
+                }
+                else
+                {
+                    brother = node.Parent.Left;
+                    if (brother.Color == Colors.Red)
+                    {
+                        brother.Color = Colors.Black;
+                        node.Parent.Color = Colors.Red;
+                        RightRotate(node.Parent);
+                        brother = node.Parent.Left;
+                    }
+                    if ((brother.Left == null || brother.Left.Color == Colors.Black) && (brother.Right == null || brother.Right.Color == Colors.Black))
+                    {
+                        brother.Color = Colors.Red;
+                        node = node.Parent;
+                    }
+                    else
+                    {
+                        if (brother.Left.Color == Colors.Black)
+                        {
+                            brother.Right.Color = Colors.Black;
+                            brother.Color = Colors.Red;
+                            LeftRotate(brother);
+                            brother = node.Parent.Left;
+                        }
+                        brother.Color = node.Parent.Color;
+                        node.Parent.Color = Colors.Black;
+                        brother.Left.Color = Colors.Black;
+                        RightRotate(node.Parent);
+                        node = root;
+                    }
+                }
+                node.Color = Colors.Black;
+                root.Color = Colors.Black;
+            }
+        }
 
+        private void Transplant(Node prevNode, Node newNode)
+        {
+            if (prevNode == null)
+                root = newNode;
+            else
+            {
+                if (prevNode.LeftConnected())
+                    prevNode.Parent.Left = newNode;
+                else
+                    prevNode.Parent.Right = newNode;
+            }
+            if (newNode!=null)
+                newNode.Parent = prevNode.Parent;
+        }
+
+        private Node MinNode(Node node)
+        {
+            var p = node;
+            while (p.Left!=null)
+                p = p.Left;
+            return p;
         }
 
         private Node FindNode(int key)
@@ -125,9 +254,7 @@ namespace RBTree
             return node;
         }
 
-
-
-        public void LeftRotate(Node node)
+        private void LeftRotate(Node node)
         {
             var rightSon = node.Right;
             if (node == root)
@@ -150,7 +277,7 @@ namespace RBTree
             node.Parent = rightSon;
         }
 
-        public void RightRotate(Node node)
+        private void RightRotate(Node node)
         {
             var leftSon = node.Left;
             if (node == root)
@@ -179,7 +306,7 @@ namespace RBTree
             node.GrandFather.Color = Colors.Red;
         }
 
-        public Node GetNode(int value)
+        private Node GetNode(int value)
         {
             var node = root;
             while (node != null)
@@ -191,7 +318,7 @@ namespace RBTree
             return null;
         }
 
-        public void FixNodesLeves()
+        private void FixNodesLeves()
         {
             if (root == null)
                 return;
