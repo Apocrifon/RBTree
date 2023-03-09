@@ -4,7 +4,7 @@
 - Insert
 - Delete
 - InsertBalanced  
--DeleteBalanced
+- DeleteBalanced
 
 ### 
 Используемые ресурсы
